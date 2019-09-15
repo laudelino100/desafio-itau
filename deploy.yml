@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: desafio-itau
+  namespace: default
+spec:
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: desafio-itau
+  template:
+    metadata:
+      labels:
+        app: desafio-itau
+    spec:
+      containers:
+      - image: laudelino100/itau:latest
+        imagePullPolicy: Always
+        name: desafio-itau
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+            httpHeaders:
+              - name: Host
+                value: KubernetesLivenessProbe
+          initialDelaySeconds: 120
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+            httpHeaders:
+              - name: Host
+                value: KubernetesLivenessProbe
+          initialDelaySeconds: 120
